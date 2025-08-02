@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PWAデバッグツール</title>
+    
+    <!-- デバッグ用：メインアプリと同じ設定を読み込む -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ロシア語学習">
     <style>
         body {
             font-family: sans-serif;
@@ -51,6 +57,7 @@
     <button onclick="registerSW()">サービスワーカー登録</button>
     <button onclick="unregisterSW()">サービスワーカー解除</button>
     <button onclick="clearCache()">キャッシュクリア</button>
+    <button onclick="window.location.href='index.html'">メインアプリへ</button>
     
     <h2>インストール手順</h2>
     <div class="info-item">

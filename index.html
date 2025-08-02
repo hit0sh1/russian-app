@@ -63,5 +63,29 @@
 
     <script src="data.js"></script>
     <script src="app.js"></script>
+    
+    <!-- PWAインストール促進 -->
+    <script>
+        // PWAインストールプロンプトを保持
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // 自動プロンプトを防ぐ
+            e.preventDefault();
+            // 後で使用するために保存
+            deferredPrompt = e;
+            console.log('PWAインストール可能です');
+        });
+        
+        // アプリがインストールされた時
+        window.addEventListener('appinstalled', () => {
+            console.log('PWAがインストールされました');
+        });
+        
+        // スタンドアロンモードの確認
+        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+            console.log('PWAスタンドアロンモードで実行中');
+        }
+    </script>
 </body>
 </html>
