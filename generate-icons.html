@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>PWAアイコン生成ツール</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+        .icon-container {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>PWAアイコン生成ツール</h1>
+    <p>各サイズのアイコンを生成して、右クリックで保存してください。</p>
+    
+    <button onclick="generateAllIcons()">全てのアイコンを生成</button>
+    
+    <div id="icons"></div>
+    
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            const scale = size / 512;
+            
+            // 背景
+            ctx.fillStyle = '#3498db';
+            roundRect(ctx, 0, 0, size, size, 64 * scale);
+            ctx.fill();
+            
+            // ロシア国旗風の装飾
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            roundRect(ctx, 0, 0, size, size * 0.332, 64 * scale);
+            ctx.fill();
+            
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+            roundRect(ctx, 0, size * 0.668, size, size * 0.332, 64 * scale);
+            ctx.fill();
+            
+            // ロシア語テキスト
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${180 * scale}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('РУ', size / 2, size * 0.5);
+            
+            // 日本語テキスト
+            ctx.font = `${48 * scale}px Arial`;
+            ctx.fillText('学習', size / 2, size * 0.74);
+        }
+        
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+        
+        function generateIcon(size) {
+            const container = document.createElement('div');
+            container.className = 'icon-container';
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            
+            drawIcon(canvas, size);
+            
+            const label = document.createElement('div');
+            label.textContent = `${size}x${size}`;
+            
+            const downloadBtn = document.createElement('button');
+            downloadBtn.textContent = 'ダウンロード';
+            downloadBtn.onclick = () => {
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `icon-${size}.png`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            };
+            
+            container.appendChild(canvas);
+            container.appendChild(label);
+            container.appendChild(downloadBtn);
+            
+            return container;
+        }
+        
+        function generateAllIcons() {
+            const container = document.getElementById('icons');
+            container.innerHTML = '';
+            
+            sizes.forEach(size => {
+                container.appendChild(generateIcon(size));
+            });
+        }
+        
+        // 初期表示
+        generateAllIcons();
+    </script>
+</body>
+</html>

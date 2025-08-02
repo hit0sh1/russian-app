@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 背景 -->
+  <rect width="512" height="512" fill="#3498db" rx="64"/>
+  
+  <!-- ロシア国旗の色をモチーフにした装飾 -->
+  <rect x="0" y="0" width="512" height="170" fill="#ffffff" opacity="0.2" rx="64"/>
+  <rect x="0" y="342" width="512" height="170" fill="#ff0000" opacity="0.2" rx="64"/>
+  
+  <!-- 中央のテキスト -->
+  <text x="256" y="280" font-family="Arial, sans-serif" font-size="180" font-weight="bold" text-anchor="middle" fill="#ffffff">РУ</text>
+  
+  <!-- 日本語のアクセント -->
+  <text x="256" y="380" font-family="Arial, sans-serif" font-size="48" text-anchor="middle" fill="#ffffff">学習</text>
+</svg>

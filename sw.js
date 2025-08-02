@@ -1,10 +1,11 @@
-const CACHE_NAME = 'russian-learning-v1';
+const CACHE_NAME = 'russian-learning-v2';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/manifest.json'
+  './',
+  './index.html',
+  './styles.css',
+  './app.js',
+  './data.js',
+  './manifest.json'
 ];
 
 // インストール時のイベント
@@ -62,7 +63,7 @@ self.addEventListener('fetch', event => {
       .catch(() => {
         // オフライン時のフォールバック
         if (event.request.destination === 'document') {
-          return caches.match('/index.html');
+          return caches.match('./index.html');
         }
       })
   );
