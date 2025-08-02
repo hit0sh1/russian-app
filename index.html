@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="日本語話者向け中級者用ロシア語学習アプリ - 文脈で学ぶ頻出単語2600語">
+    <meta name="theme-color" content="#3498db">
+    <title>ロシア語学習 - 文脈語彙学習</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <h1>ロシア語学習</h1>
+            <div class="progress-info">
+                <span id="currentSentence">1</span> / <span id="totalSentences">560</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="sentence-container">
+                <div class="sentence-text" id="sentenceText"></div>
+                <div class="sentence-translation" id="sentenceTranslation"></div>
+            </div>
+
+            <div class="audio-controls">
+                <button class="btn btn-primary" id="playFullSentence">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    文章を再生
+                </button>
+            </div>
+
+            <div class="navigation">
+                <button class="btn btn-nav" id="prevBtn" disabled>前へ</button>
+                <button class="btn btn-nav" id="nextBtn">次へ</button>
+            </div>
+        </main>
+
+        <div id="wordPopup" class="word-popup hidden">
+            <div class="popup-content">
+                <div class="popup-word" id="popupWord"></div>
+                <div class="popup-reading" id="popupReading"></div>
+                <div class="popup-meaning" id="popupMeaning"></div>
+                <button class="btn btn-small" id="playWordAudio">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    発音
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
