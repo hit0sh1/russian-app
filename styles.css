@@ -107,6 +107,20 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+@media (hover: none) {
+    .btn:hover:not(:disabled) {
+        transform: none;
+    }
+    
+    .btn:active:not(:disabled) {
+        transform: scale(0.98);
+    }
+}
+
 .btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;

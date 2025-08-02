@@ -15,6 +15,7 @@ function init() {
     loadProgress();
     setupEventListeners();
     displaySentence();
+    initVoices();
     
     // サービスワーカーの登録
     if ('serviceWorker' in navigator) {
@@ -150,26 +151,68 @@ function hideWordPopup() {
     document.querySelectorAll('.word').forEach(w => w.classList.remove('active'));
 }
 
+// 音声再生の共通関数
+function speak(text, rate = 0.9) {
+    if ('speechSynthesis' in window) {
+        // 既存の音声をキャンセル
+        speechSynthesis.cancel();
+        
+        // 少し待ってから新しい音声を再生（モバイル対応）
+        setTimeout(() => {
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // ロシア語の音声を探す
+            const voices = speechSynthesis.getVoices();
+            const russianVoice = voices.find(voice => 
+                voice.lang === 'ru-RU' || 
+                voice.lang === 'ru' || 
+                voice.lang.startsWith('ru-')
+            );
+            
+            if (russianVoice) {
+                utterance.voice = russianVoice;
+            }
+            
+            utterance.lang = 'ru-RU';
+            utterance.rate = rate;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            
+            // エラーハンドリング
+            utterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event.error);
+            };
+            
+            speechSynthesis.speak(utterance);
+        }, 100);
+    }
+}
+
+// 音声リストの初期化
+function initVoices() {
+    if ('speechSynthesis' in window) {
+        // 音声リストが読み込まれるまで待つ
+        if (speechSynthesis.getVoices().length === 0) {
+            speechSynthesis.addEventListener('voiceschanged', () => {
+                const voices = speechSynthesis.getVoices();
+                console.log('Available voices:', voices.filter(v => v.lang.includes('ru')));
+            }, { once: true });
+        }
+    }
+}
+
 // 文章全体の音声再生（Web Speech APIを使用）
 function playFullSentence() {
     const sentence = sentences[appState.currentIndex];
-    if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(sentence.russian);
-        utterance.lang = 'ru-RU';
-        utterance.rate = 0.9;
-        speechSynthesis.speak(utterance);
-    }
+    speak(sentence.russian, 0.9);
 }
 
 // 単語の音声再生
 function playWordAudio() {
     const popup = document.getElementById('wordPopup');
     const word = popup.dataset.currentWord;
-    if (word && 'speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(word);
-        utterance.lang = 'ru-RU';
-        utterance.rate = 0.8;
-        speechSynthesis.speak(utterance);
+    if (word) {
+        speak(word, 0.8);
     }
 }
 

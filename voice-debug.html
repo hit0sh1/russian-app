@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音声デバッグツール</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .voice-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        #info {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>音声合成デバッグツール</h1>
+    
+    <div id="info">
+        <p>デバイス情報を読み込み中...</p>
+    </div>
+    
+    <h2>テストテキスト</h2>
+    <textarea id="testText" rows="3" cols="50">Привет, как дела?</textarea>
+    
+    <h2>設定</h2>
+    <label>速度: <input type="range" id="rate" min="0.1" max="2" step="0.1" value="0.9"> <span id="rateValue">0.9</span></label><br>
+    <label>ピッチ: <input type="range" id="pitch" min="0.5" max="2" step="0.1" value="1"> <span id="pitchValue">1</span></label><br>
+    
+    <h2>音声選択</h2>
+    <select id="voiceSelect">
+        <option value="">自動選択</option>
+    </select>
+    
+    <button onclick="testSpeech()">音声テスト</button>
+    <button onclick="stopSpeech()">停止</button>
+    
+    <h2>利用可能な音声</h2>
+    <div id="voiceList"></div>
+    
+    <script>
+        // デバイス情報表示
+        document.getElementById('info').innerHTML = `
+            <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
+            <p><strong>プラットフォーム:</strong> ${navigator.platform}</p>
+            <p><strong>言語:</strong> ${navigator.language}</p>
+            <p><strong>音声合成サポート:</strong> ${'speechSynthesis' in window ? 'あり' : 'なし'}</p>
+        `;
+        
+        // スライダーの値表示
+        document.getElementById('rate').oninput = e => {
+            document.getElementById('rateValue').textContent = e.target.value;
+        };
+        document.getElementById('pitch').oninput = e => {
+            document.getElementById('pitchValue').textContent = e.target.value;
+        };
+        
+        // 音声リストの更新
+        function updateVoiceList() {
+            const voices = speechSynthesis.getVoices();
+            const voiceList = document.getElementById('voiceList');
+            const voiceSelect = document.getElementById('voiceSelect');
+            
+            voiceList.innerHTML = '';
+            voiceSelect.innerHTML = '<option value="">自動選択</option>';
+            
+            voices.forEach((voice, index) => {
+                // ロシア語音声を強調表示
+                const isRussian = voice.lang.includes('ru');
+                const div = document.createElement('div');
+                div.className = 'voice-item';
+                div.style.backgroundColor = isRussian ? '#e8f5e9' : '';
+                div.innerHTML = `
+                    <strong>${voice.name}</strong><br>
+                    言語: ${voice.lang}<br>
+                    ローカル: ${voice.localService ? 'はい' : 'いいえ'}<br>
+                    デフォルト: ${voice.default ? 'はい' : 'いいえ'}
+                    <button onclick="testVoice(${index})">この音声でテスト</button>
+                `;
+                voiceList.appendChild(div);
+                
+                // セレクトボックスに追加
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${voice.name} (${voice.lang})`;
+                if (isRussian) option.style.backgroundColor = '#e8f5e9';
+                voiceSelect.appendChild(option);
+            });
+            
+            document.getElementById('info').innerHTML += `
+                <p><strong>利用可能な音声数:</strong> ${voices.length}</p>
+                <p><strong>ロシア語音声:</strong> ${voices.filter(v => v.lang.includes('ru')).length}</p>
+            `;
+        }
+        
+        // 音声リストの初期化
+        if (speechSynthesis.getVoices().length === 0) {
+            speechSynthesis.addEventListener('voiceschanged', updateVoiceList);
+        } else {
+            updateVoiceList();
+        }
+        
+        // 音声テスト
+        function testSpeech() {
+            speechSynthesis.cancel();
+            
+            const text = document.getElementById('testText').value;
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // 音声選択
+            const voiceIndex = document.getElementById('voiceSelect').value;
+            if (voiceIndex) {
+                utterance.voice = speechSynthesis.getVoices()[voiceIndex];
+            }
+            
+            utterance.lang = 'ru-RU';
+            utterance.rate = parseFloat(document.getElementById('rate').value);
+            utterance.pitch = parseFloat(document.getElementById('pitch').value);
+            utterance.volume = 1;
+            
+            utterance.onstart = () => console.log('音声開始');
+            utterance.onend = () => console.log('音声終了');
+            utterance.onerror = (e) => console.error('エラー:', e);
+            
+            speechSynthesis.speak(utterance);
+        }
+        
+        // 特定の音声でテスト
+        function testVoice(index) {
+            speechSynthesis.cancel();
+            
+            const text = document.getElementById('testText').value;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = speechSynthesis.getVoices()[index];
+            utterance.rate = parseFloat(document.getElementById('rate').value);
+            utterance.pitch = parseFloat(document.getElementById('pitch').value);
+            
+            speechSynthesis.speak(utterance);
+        }
+        
+        // 音声停止
+        function stopSpeech() {
+            speechSynthesis.cancel();
+        }
+    </script>
+</body>
+</html>
